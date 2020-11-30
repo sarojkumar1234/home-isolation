@@ -2,27 +2,26 @@
 #include<string.h>
 #include<stdlib.h>
 #include<math.h>
-
 #define Student struct Stud
-
-void add(FILE * fp); //to add to list
-FILE * del(FILE * fp);//to delete from list
-void modify(FILE * fp);//to modify a record
-void displayList(FILE * fp);//display whole list
+void add(FILE * fp); //to add patient list
+FILE * del(FILE * fp);//to delete patient list
+void checkup(FILE * fp);//for daily check up
+void display(FILE * fp);//display whole list
 void searchRecord(FILE *fp);//find a particular record
 void printChar(char ch,int n);//printing a character ch n times
 void printHead();//printing head line for each screen
-
+void suggestion(FILE * fp);
 struct Stud
 {
     char name[100];
-    char disease[50];
+    char disease[100];
     char condition[50];
-    int adno;
+    long long int adno;
     float temp;
     int pulserate;
+    int oxygenlevel;
 };
-int pulserate=0;
+//int pulserate=0;
 
 int main()
 {
@@ -31,9 +30,9 @@ int main()
 int option;
 char another;
 
-if((fp=fopen("studentInfo13.txt","rb+"))==NULL)
+if((fp=fopen("patientInfo55.csv","rb+"))==NULL)
 {
-    if((fp=fopen("studentInfo13.txt","wb+"))==NULL)
+    if((fp=fopen("patientInfo55.csv","wb+"))==NULL)
        {
            printf("can't open file");
            return 0;
@@ -42,41 +41,55 @@ if((fp=fopen("studentInfo13.txt","rb+"))==NULL)
 printHead();
 printf("\n\n\t\tONE THING KEEP IN MIND IS - DO NOT PANIC\n");
 printf("\n\t\tPLEASE PRESS ANY KEY TO CONTINUE");
-getch();
+
 while(1)
 {
     printHead();
     printf("\n\t");
     printChar('-',64);
+    int choice;
+    printf("\n\n\t 1. PATIENT  \t\t\t\t 2. DOCTOR \n");
+    printf("\n PLEASE ENTER YOUR CHOICE :- ");
+    scanf("%d",&choice);
+    if(choice==1)
+    {
 printf("\n\n\t\t\t1. PLEASE PROVIDE YOUR HEALTH DETAIL");
     printf("\n\n\t\t\t2. DAILY HEALTH CHECK UP");
-        printf("\n\n\t\t\t3. DELETE RECORD");
-printf("\n\n\t\t\t4. DISPLAY PATIENT LIST");
-    printf("\n\n\t\t\t5. SEARCH PATIENT RECORD");
+    printf("\n\n\t\t\t3 . SUGGESTION");
+        printf("\n\n\t\t\t0. EXIT");
+printf("\n\n\t\tEnter Your Option :--> ");
+    scanf("%d",&option);
+    }
+    else{
+        printf("\n\n\t\t\t4. DELETE PATIENT RECORD");
+printf("\n\n\t\t\t5. DISPLAY PATIENT LIST");
+    printf("\n\n\t\t\t6. SEARCH PARTICULAR PATIENT RECORD");
     printf("\n\n\t\t\t0. EXIT");
 printf("\n\n\t\tEnter Your Option :--> ");
     scanf("%d",&option);
+
+    }
 switch(option)
     {
         case 0: return 1;
                 break;
         case 1: add(fp);
                 break;
-        case 2: modify(fp);
+        case 2: checkup(fp);
                 break;
-        case 3: fp=del(fp);
+        case 3: suggestion(fp);
                 break;
-        case 4: displayList(fp);
+        case 5: display(fp);
                 break;
-        case 5: searchRecord(fp);
+          case 4: fp=del(fp);
                 break;
-        default: printf("\n\t\tYou Pressed wrong key");
+        case 6: searchRecord(fp);
+                break;
+default: printf("\n\t\tYou Pressed wrong key");
                   printf("\n\t\tProgram terminated");
-                  getch();
                   exit(0);
 }
 }
-return 1;
 }
 //----printing character ch at n times ------
 void printChar(char ch,int n)
@@ -98,7 +111,7 @@ printf("[HOME ISOLATION]");
 printChar('=',16);
 printf("\n");
 }
-// ==========ADDING NEW RECORD==========================
+// ==========ADDING PATIENT RECORD==========================
 void add(FILE * fp)
 {
 printHead();
@@ -108,38 +121,60 @@ int i;
 fseek(fp,0,SEEK_END);
 while(another=='y'||another=='Y')
 {
-printf("\n\n\t\tEnter Your valid Adhar number: ");
-scanf("%d",&s.adno);
+A:
+    printf("\n\t\t\tPLEASE ENTER YOUR DETAIL\n");
+printf("\n\n\t\tEnter Your valid Aadhaar number: ");
+while(1)
+{
+    long long int temp;
+    int count=0;
+scanf("%lld",&s.adno);
+temp=s.adno;
+while(temp!=0)
+{
+    temp=temp/10;
+    count++;
+}
+if(count!=12)
+{
+    printf("\n\t\tYou entered wrong Aadhaar no");
+    goto A;
+}
+else
+{
+   break;
+}
+}
    printf("\n\n\t\tEnter your full name :");
     fflush(stdin);
     fgets(s.name,100,stdin); //fgets takes an extra \n character as input
     s.name[strlen(s.name)-1]='\0';
-    printf("\n\n\t\tIF YOU HAVE ANY OF THE FOLLOWING PROBLEM \n 1.ASTHMA \n 2.CANCER.\n 3. RENAL DISEASE \n 4. DIABETES\t\n 5. BLOOD PRESSURE \n \n PLEASE WRITE HERE  : ");
+    printf("\n\n\t\tIF YOU HAVE ANY OF THE FOLLOWING DISEASE PLZ WRITE HERE EXAMPLE (A.ASTHMA \n B.CANCER.\n C. DIABETES\t\n D. BLOOD PRESSURE OR ANY PROBLEM)  \n \n PLEASE WRITE HERE  : ");
+
 fflush(stdin);
-    fgets(s.disease,50,stdin);
+fgets(s.disease,50,stdin);
     s.disease[strlen(s.disease)-1]='\0';
-//printf("\n\n\t\tEnter your dis name :");
-    //fflush(stdin);
-    //fgets(s.condition,100,stdin); //fgets takes an extra \n character as input
-    //s.condition[strlen(s.condition)-1]='\0';
 printf("\n\nEnter Your Body temp in Fahrenheit : ");
 scanf("%f",&s.temp);
 //fwrite(&s,sizeof(s),1,fp);
 printf("\n\nEnter Your  pulse rate in BPM : ");
 scanf("%d",&s.pulserate);
+printf("\n\nEnter oxygen level : ");
+scanf("%d",&s.oxygenlevel);
 fwrite(&s,sizeof(s),1,fp);
-    fflush(stdin);
-printf("\n\n\t\tWant to enter another student info (Y/N) : ");
+    //fflush(stdin);
+printf("\n\n\t\tWant to enter another patient info (Y/N) : ");
+fflush(stdin);
     another=getchar();
 }
 }
-//===================DELETING A RECORD FROM LIST ============
+//===================DELETING A PATIENT RECORD ============
 FILE * del(FILE * fp)
 {
  printHead();
 
 Student s;
-int flag=0,tempRoll,siz=sizeof(s);
+long long int flag=0,tempRoll,siz=sizeof(s);
 FILE *ft;
 
 if((ft=fopen("temp.txt","wb+"))==NULL)
@@ -148,9 +183,9 @@ if((ft=fopen("temp.txt","wb+"))==NULL)
     system("pause");
      return fp;
 }
-printf("\n\n\tEnter Adhar no of Of patient whom you want to delete");
-printf("\n\n\t\t\tAdhar  No. : ");
-scanf("%d",&tempRoll);
+printf("\n\n\tEnter Aadhaar no of Of patient whom you want to delete");
+printf("\n\n\t\t\tAadhaar  No. : ");
+scanf("%lld",&tempRoll);
 rewind(fp);
 while((fread(&s,siz,1,fp))==1)
 {
@@ -165,9 +200,9 @@ while((fread(&s,siz,1,fp))==1)
 }
 fclose(fp);
 fclose(ft);
-remove("studentInfo13.txt");
-rename("temp.txt","studentInfo13.txt");
-if((fp=fopen("studentInfo13.txt","rb+"))==NULL)
+remove("patientInfo55.csv");
+rename("temp.txt","patientInfo55.csv");
+if((fp=fopen("patientInfo55.csv","rb+"))==NULL)
 {
     printf("ERROR");
     return  NULL;
@@ -178,16 +213,16 @@ printf("\n\t");
 system("pause");
 return fp;
 }
-//===========MODIFY A RECORD ===========================
-void modify(FILE * fp)
+//===========DAILY CHECK UP ===========================
+void checkup(FILE * fp)
 {
 printHead();
 Student s;
-int i,flag=0,tempRoll,siz=sizeof(s);
+long long int i,flag=0,tempRoll,siz=sizeof(s);
 printf("\n\n\t\tREMEMBER HOME ISOLATION IS PHYSICAL DISTANCING NOT EMOTIONAL DISTANCING");
 printf("\n\n WARNING :- PLEASE DO A HEALTH CHECKUP TWICE IN A DAY BECAUSE, WE KEEP YOUR LATEST TEMPERATURE AND PULSE RATE ");
-printf("\n\n\tEnter your registered  Adhar Number  : ");
-scanf("%d",&tempRoll);
+printf("\n\n\tEnter your registered  Aadhaar Number  : ");
+scanf("%lld",&tempRoll);
 rewind(fp);
 while((fread(&s,siz,1,fp))==1)
 {
@@ -200,27 +235,13 @@ if(flag==1)
     {
     fseek(fp,-siz,SEEK_CUR);
     printf("\n\n\t\tRECORD FOUND");
-   // printf("\n\n\t\tEnter New Data for the Record");
-//printf("\n\n\t\tEnter new aadhar no \t");
-    //scanf("%d",&s.adno);
-    //printf("\n\n\t\tEnter Full Name of patient\t");
-    //fflush(stdin);
-    //fgets(s.name,100,stdin);
-    //s.name[strlen(s.name)-1]='\0';
-
-    //printf("\n\n\t\tif you have following dieses plz write here\t");
-    //fflush(stdin);
-    //fgets(s.disease,50,stdin);
-    //s.disease[strlen(s.disease)-1]='\0';
-    printf("\n\n\t\tif you have following dis plz write here\t");
-    fflush(stdin);
-    fgets(s.condition,50,stdin);
-    s.condition[strlen(s.condition)-1]='\0';
-printf("\n\n\tEnter Body Temp in fahrenheit : ");
+   printf("\n\n\tEnter Body Temp in fahrenheit : ");
 scanf("%f",&s.temp);
-fwrite(&s,sizeof(s),1,fp);
+//fwrite(&s,sizeof(s),1,fp);
 printf("\n\n\tEnter pulse rate  in BPM :");
 scanf("%d",&s.pulserate);
+printf("\n\n\tEnter oxygen level:");
+scanf("%d",&s.oxygenlevel);
 fwrite(&s,sizeof(s),1,fp);
 }
 else printf("\n\n\t!!!! ERROR !!!! RECORD NOT FOUND");
@@ -228,48 +249,106 @@ printf("\n\n\t");
 system("pause");
 
 }
-//====================DISPLAY THE LIST =================
-void displayList(FILE * fp)
+//====================DISPLAY THE PATIENT LIST =================
+void display(FILE * fp)
 {   printHead();
     Student s;
     int i,siz=sizeof(s);
   rewind(fp);
 while((fread(&s,siz,1,fp))==1)
     {
-printf("\n\n\t\tADHAR NO : %d",s.adno);
+        printf("\n\t\tPATIENT DETAILS ARE :-");
+printf("\n\n\t\tAADHAAR NO : %lld",s.adno);
                 printf("\n\t\tNAME : %s",s.name);
                         printf("\n\t\tDISEASE : %s",s.disease);
-                        printf("\n\t\tCONDITION : %s",s.condition);
 printf("\n\tBody Temperature: ");
 printf("| %.2f |",s.temp);
         printChar('-',65);
         printf("\n\tPulse Rate: ");
 printf("| %d |",s.pulserate);
         printChar('-',65);
+        printf("\n\toxygenlevel: ");
+printf("| %d |",s.oxygenlevel);
+        printChar('-',65);
     }
     printf("\n\n\n\t");
      printChar('*',65);
     printf("\n\n\t");
     system("pause");
-    printf("\n\n\n\t");
-     printChar('*',65);
-    printf("\n\n\t");
-    system("pause");
-    printf("\n\n\n\t");
-     printChar('*',65);
-    printf("\n\n\t");
-    system("pause");
+
 }
-void searchRecord(FILE *fp)
+//GIVING SUGGESTION TO PATIENT
+void suggestion(FILE *fp)
 {printHead();
-int tempRoll,flag,siz,i;
+long long int tempRoll,flag,siz,i;
 Student s;
 char another='y';
 siz=sizeof(s);
 while(another=='y'||another=='Y')
 {
-printf("\n\n\tEnter adhar  Number of Student to search the record : ");
-scanf("%d",&tempRoll);
+printf("\n\n\tEnter Aadhaar  Number if you want to suggestion : ");
+scanf("%lld",&tempRoll);
+rewind(fp);
+while((fread(&s,siz,1,fp))==1)
+{
+    if(s.adno==tempRoll)
+        {flag=1;
+        break;
+        }
+}
+if(flag==1)
+    {
+        if(s.oxygenlevel<95)
+        {
+            printf("PLEASE BE REMAIN AT HIGH ALERT");
+        }
+    if((s.temp >=100)&&(s.pulserate>=100))
+    {
+        printf("\n\t\t\tPLEASE BE REMAIN AT HIGH ALERT.\n");
+    printf("1. A care giver  must be be available to provide care on 24 x7 basis\n");
+     printf(" 2. Please inform your caregiver to maintain communication link between with doctor\n");
+      printf(" 3. please follow all the instruction prescribed by the treating medical officer\n");
+      printf("4. please discuss your health status to the District Surveillance Officer or Distric surveillance teams\n");
+
+}
+if((s.temp >=100)&&(s.pulserate<=100))
+    {
+        printf("\n\t\t\tPLEASE BE REMAIN AT ALERT.");
+        printf("1. A care giver  must be be available to provide care on 24 x7 basis\n");
+printf(" 2. Please inform your caregiver to maintain communication link between with doctor\n");
+      printf(" 3. please follow all the instruction prescribed by the treating medical officer.");
+}
+if((s.temp <=100)&&(s.pulserate>=100))
+    {
+        printf("\n\t\tPLEASE BE REMAIN AT ALERT.");
+            printf("1. A care giver  must be be available to provide care on 24 x7 basis\n");
+      printf(" 3. please follow all the instruction prescribed by the treating medical officer\n");
+
+}
+if((s.temp <=100)&&(s.pulserate<=100))
+    {
+    printf("\nTHERE IS NO NEED TO WORRY.");
+}
+
+
+}
+else printf("\n\n\t\t!!!! ERROR RECORD NOT FOUND !!!!");
+printf("\n\n\t\tWant to know suggestion (Y/N)");
+fflush(stdin);
+another=getchar();
+}
+}
+// TO SEARCH SPECIFIC PATIENT RECORD
+void searchRecord(FILE *fp)
+{printHead();
+long long int tempRoll,flag,siz,i;
+Student s;
+char another='y';
+siz=sizeof(s);
+while(another=='y'||another=='Y')
+{
+printf("\n\n\tEnter Aadhaar  Number of patient to search the record : ");
+scanf("%lld",&tempRoll);
 rewind(fp);
 while((fread(&s,siz,1,fp))==1)
 {
@@ -282,12 +361,15 @@ if(flag==1)
     {
     printf("\n\t\tNAME : %s",s.name);
         printf("\n\n\t\tDIESESE: %s",s.disease);
-        printf("\n\n\t\tADHAR NO : %d",s.adno);
+        printf("\n\n\t\tAADHAAR NO : %lld",s.adno);
         printf("\n\n\tTEMP: ");
 printf("| %.2f |",s.temp);
         printChar('-',65);
         printf("\n\n\tPULSE RATE: ");
 printf("| %d |",s.pulserate);
+        printChar('-',65);
+        printf("\n\n\toxygenlevel: ");
+printf("| %d |",s.oxygenlevel);
         printChar('-',65);
 }
 else printf("\n\n\t\t!!!! ERROR RECORD NOT FOUND !!!!");
