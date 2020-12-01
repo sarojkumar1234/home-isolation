@@ -319,8 +319,8 @@ if((ft=fopen("temp.txt","wb+"))==NULL)
      return fp;
 }
 printf("\n\t\t\tWELCOME DOCTOR!");
-printf("\n\n\tEnter Aadhaar no of Of patient whom you want to delete");
-printf("\n\n\t\t\tAadhaar  No. : ");
+printf("\n\n\tEnter Aadhaar no of the patient whose details are to be deleted:- ");
+
 scanf("%lld",&tempRoll);
 rewind(fp);
 while((fread(&s,siz,1,fp))==1)
@@ -328,7 +328,7 @@ while((fread(&s,siz,1,fp))==1)
     if(s.adno==tempRoll)
     { flag=1;
     printf("\n\tRecord Deleted for");
-    printf("\n\n\t\t%s\n\n\t\t%s\n\n\t\t%d\n\t",s.name,s.disease,s.adno);
+    printf("\n\n\t\t%s\n\n\t\t%s\n\n\t\t%lld\n\t",s.name,s.disease,s.adno);
     continue;
     }
 
